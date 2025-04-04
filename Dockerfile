@@ -33,4 +33,4 @@ ENV PYTHON_VERSION=${PYTHON_VERSION}
 EXPOSE 7591
 
 # bash -c  "printenv && source /app/owl/.venv/bin/activate && python3.12 webapp.py"
-CMD ["bash", "-c", "printenv 2>&1 | tee -a webapp.log && source /app/owl/.venv/bin/activate && python${PYTHON_VERSION} webapp.py 2>&1 | tee -a webapp.log  || sleep infinity"]
+CMD ["bash", "-c", "printenv 2>&1 | tee -a boto3-mcp.log && source /app/boto3-mcp/.venv/bin/activate && python${PYTHON_VERSION} boto3_fastapi_server.py 2>&1 | tee -a boto3-mcp.log  || sleep infinity"]
