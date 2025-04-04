@@ -15,7 +15,7 @@ async def get_root():
 
 
 @server.get("/resp1", response_class=PlainTextResponse)
-async def get_root():
+async def get_resp1():
     return "response1"
 
 
