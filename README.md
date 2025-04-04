@@ -1,2 +1,3 @@
 # aws-boto3-mcp-private
-AWS Boto3 (Pyton) MCP Server
+
+AWS Boto3 (Python) MCP Server
