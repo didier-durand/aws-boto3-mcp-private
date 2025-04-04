@@ -22,6 +22,7 @@ COPY  "README.md" .
 COPY  "requirements.txt" .
 COPY  "src/" .
 
+# hadolint ignore=SC1091
 RUN python${PYTHON_VERSION} -m venv ".venv" \
     && source ".venv/bin/activate" \
     && python${PYTHON_VERSION} -m pip install --upgrade --no-cache-dir -r requirements.txt
