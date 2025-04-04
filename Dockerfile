@@ -27,6 +27,7 @@ RUN python${PYTHON_VERSION} -m venv ".venv" \
     && source ".venv/bin/activate" \
     && python${PYTHON_VERSION} -m pip install --upgrade --no-cache-dir -r requirements.txt
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN curl -fsSL https://deno.land/install.sh | sh && ln -s /root/.deno/bin/deno /usr/local/bin/deno
 
 # setup runtime env vars

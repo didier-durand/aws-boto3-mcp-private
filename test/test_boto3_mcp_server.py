@@ -4,6 +4,7 @@ from mcp import StdioServerParameters
 
 
 # https://github.com/modelcontextprotocol/python-sdk?tab=readme-ov-file#quickstart
+# https://ai.pydantic.dev/mcp/run-python/#installation
 
 class TestBoto3MCPServer(unittest.TestCase):
 
