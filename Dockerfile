@@ -1,11 +1,11 @@
-# docker run -p 7860:7860 -e MISTRAL_API_KEY=$MISTRAL_API_KEY -e OWL_USERNAME=$OWL_USERNAME -e OWL_PASSWORD=$OWL_PASSWORD --name owl didierdurand/owl:ubuntu-latest
+# docker run -p 7591:7591 --name boto3-mcp didierdurand/boto3-mcp:ubuntu24.04-latest
 
 FROM ubuntu:24.04
 SHELL ["/bin/bash", "-c"]
 
 ARG PYTHON_VERSION="3.12"
 
-# install headers, tools & utilities + Python
+# install tools & utilities + Python
 # hadolint ignore=DL3008
 RUN apt-get update -y \
     && apt-get upgrade -y  \
@@ -22,7 +22,6 @@ COPY  "README.md" .
 COPY  "requirements.txt" .
 COPY  "src/" .
 
-# hadolint ignore=SC1091
 RUN python${PYTHON_VERSION} -m venv ".venv" \
     && source ".venv/bin/activate" \
     && python${PYTHON_VERSION} -m pip install --upgrade --no-cache-dir -r requirements.txt
