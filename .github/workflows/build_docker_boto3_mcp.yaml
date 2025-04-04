@@ -4,7 +4,7 @@ on:
 
   push:
     paths:
-      - 'docker/Dockerfile'
+      - 'Dockerfile'
       - '.github/workflows/build_docker_boto3_mcp.yaml'
       - '.hadolint.yaml'
 
