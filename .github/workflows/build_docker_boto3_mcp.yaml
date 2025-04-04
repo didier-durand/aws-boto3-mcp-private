@@ -1,4 +1,4 @@
-name: 'docker build OWL'
+name: 'docker build boto3-mcp'
 
 on:
 
