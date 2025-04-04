@@ -1,0 +1,73 @@
+---
+Description: >
+   template for Boto3 MCP backend as AWS LightSail service
+
+Parameters:
+
+  Boto3McpImageRegistry:
+    Type: String
+    Default: 'didierdurand'
+
+  Boto3McpImageName:
+    Type: String
+    Default: 'boto3-mcp'
+
+  Boto3McpImageTag:
+    Type: String
+    Default: 'ubuntu-latest'
+
+  Boto3McpContainerPort:
+    Type: Number
+    Default: 7591
+
+  PythonDir:
+    Type: String
+    Default: '/tmp'
+
+Resources:
+
+  Boto3McpContainer:
+    Type: AWS::Lightsail::Container
+    DeletionPolicy: Delete
+    Properties:
+      ServiceName: !Sub '${Boto3McpImageName}-${UnicitySuffix.Value}'
+      ContainerServiceDeployment:
+        Containers:
+            - ContainerName: !Sub '${Boto3McpImageName}-${UnicitySuffix.Value}'
+              Environment:
+                - Variable: 'PYTHON_DIR'
+                  Value: !Ref PythonDir
+              Image: !Sub '${Boto3McpImageRegistry}/${Boto3McpImageName}:${Boto3McpImageTag}'
+              Ports:
+                - Port: !Ref Boto3McpContainerPort
+                  Protocol: 'HTTP'
+        PublicEndpoint:
+          ContainerName: !Sub '${Boto3McpImageName}-${UnicitySuffix.Value}'
+          ContainerPort: !Ref Boto3McpContainerPort
+          HealthCheckConfig:
+            HealthyThreshold: 2
+            IntervalSeconds: 5
+            Path: '/'
+            SuccessCodes: '200'
+            TimeoutSeconds: 2
+            UnhealthyThreshold: 2
+      IsDisabled: 'false'
+      Power: 'xlarge'
+      Scale: 1
+      Tags:
+        - Key: 'Name'
+          Value: !Sub '${Boto3McpImageName}-${UnicitySuffix.Value}'
+
+  UnicitySuffix:
+    Type: AWS::SSM::Parameter
+    DeletionPolicy: Delete
+    Properties:
+      Type: String
+      Name: !Join
+        - '-'
+        - - !Sub 'unicity-suffix-lightsail-${Boto3McpImageName}'
+          - !Select [ 0, !Split [ '-', !Select [ 2, !Split [ /, !Ref AWS::StackId ] ] ] ]
+      Value: !Select [ 0, !Split [ '-', !Select [ 2, !Split [ /, !Ref AWS::StackId ] ] ] ]
+      Tags:
+        Key: 'Name'
+        Value: !Sub 'unicity-suffix-lightsail-${Boto3McpImageName}-${AWS::StackId}'
