@@ -1,7 +1,9 @@
+import asyncio
 import textwrap
 import unittest
 
-from tools import is_code_valid, is_deno_installed
+
+from tools import is_code_valid, is_deno_installed, execute_code
 
 
 class TestMcpTools(unittest.TestCase):
@@ -43,3 +45,16 @@ class TestMcpTools(unittest.TestCase):
         self.assertTrue(is_deno_installed())
         #
         self.assertFalse(is_deno_installed(command="foo-bar-foo"))
+
+
+    def test_execute_code(self):
+        code = """
+        import numpy
+        a = numpy.array([1, 2, 3])
+        print(a)
+        a
+        """
+        #
+        is_error, log = asyncio.run(execute_code(code=code,debug=True))
+        self.assertFalse(is_error)
+        print(log)
