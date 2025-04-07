@@ -1,7 +1,7 @@
 import textwrap
 import unittest
 
-from tools import is_code_valid
+from tools import is_code_valid, is_deno_installed
 
 
 class TestMcpTools(unittest.TestCase):
@@ -38,3 +38,8 @@ class TestMcpTools(unittest.TestCase):
         print(error_msg)
         self.assertTrue(valid)
         self.assertIsNone(error_msg)
+
+    def test_is_deno_installed(self):
+        self.assertTrue(is_deno_installed())
+        #
+        self.assertFalse(is_deno_installed(command="foo-bar-foo"))
