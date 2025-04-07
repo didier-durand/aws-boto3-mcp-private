@@ -53,6 +53,8 @@ jobs:
         echo "pwd: $(pwd)"
         ls -1 -alh
         #
+        printenv
+        #
         echo "len(AWS_ACCESS_KEY_ID): ${#AWS_ACCESS_KEY_ID}"
         echo "len(AWS_SECRET_ACCESS_KEY): ${#AWS_SECRET_ACCESS_KEY}"
         #
