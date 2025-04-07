@@ -11,3 +11,6 @@ def is_code_valid(code: str) -> tuple[bool,str | None]:
     if isinstance(module, ast.Module):
         return True,None
     return False,None
+
+def is_deno_installed() -> bool:
+    pass
