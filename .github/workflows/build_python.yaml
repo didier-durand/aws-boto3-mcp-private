@@ -42,7 +42,8 @@ jobs:
         export PYTHONPATH="$(pwd)/src:$(pwd)/test":$PYTHONPATH
         echo "PYTHONPATH:" $PYTHONPATH
         # deno install is required for the Python execution sandbox - see https://deno.com/
-        curl -fsSL https://deno.land/install.sh | sh && ln -s /root/.deno/bin/deno /usr/local/bin/deno
+        curl -fsSL https://deno.land/install.sh | sh 
+        ln -s /home/runner/.deno/bin/deno /usr/local/bin/deno
         deno --version
         #
         pip install pytest pytest-cov
