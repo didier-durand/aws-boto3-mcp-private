@@ -1,5 +1,6 @@
 import ast
 import traceback
+from typing import Tuple
 
 from mcp import StdioServerParameters, stdio_client, ClientSession
 
@@ -44,9 +45,8 @@ def is_code_valid(code: str) -> tuple[bool,str | None]:
         return True,None
     return False,None
 
-def is_deno_installed(command="deno --version") -> bool:
+def is_deno_installed(command="deno --version") -> Tuple[bool,str]:
     exception, rc, stdout, stderr = exec_os_command(command)
     if exception is not None or rc != 0 or stderr != "":
-        return False
-    print(stdout)
-    return True
+        return False, ""
+    return True, stdout

@@ -42,9 +42,15 @@ class TestMcpTools(unittest.TestCase):
         self.assertIsNone(error_msg)
 
     def test_is_deno_installed(self):
-        self.assertTrue(is_deno_installed())
+        installed, stdout = is_deno_installed()
+        print(stdout)
+        self.assertTrue(installed)
+        self.assertTrue("deno" in stdout)
+        self.assertTrue("typescript" in stdout)
         #
-        self.assertFalse(is_deno_installed(command="foo-bar-foo"))
+        installed, stdout = is_deno_installed(command="foo-bar-boo")
+        self.assertFalse(installed)
+        self.assertEqual("",stdout)
 
 
     def test_execute_code(self):
