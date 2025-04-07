@@ -23,4 +23,4 @@ class TestUtils(unittest.TestCase):
             if platform == "darwin":
                 self.assertTrue("Darwin" in stdout)
             if platform in  ["linux","linux2"]:
-                self.assertTrue("Darwin" in stdout,f"uname output: {stdout}")
+                self.assertTrue("Linux" in stdout,f"uname output: {stdout}")
