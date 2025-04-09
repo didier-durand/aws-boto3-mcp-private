@@ -1,17 +1,11 @@
 import asyncio
 import textwrap
-import unittest
 
+from mcp_testcase import McpTestCase  # pylint: disable=E0401
 from tools import is_code_valid, is_deno_installed, execute_code, process_execution_log
 
 
-class TestMcpTools(unittest.TestCase):
-
-    def setUp(self):
-        print(f"\n### starting {unittest.TestCase.id(self)}")
-
-    def tearDown(self):
-        print(f"\n### ending {unittest.TestCase.id(self)}")
+class TestMcpTools(McpTestCase):
 
     def test_is_code_valid_none(self):
         valid, error_msg = is_code_valid("")
