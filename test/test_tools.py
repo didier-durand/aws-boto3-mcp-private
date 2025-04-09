@@ -5,7 +5,6 @@ import unittest
 from tools import is_code_valid, is_deno_installed, execute_code, process_execution_log
 
 
-
 class TestMcpTools(unittest.TestCase):
 
     def setUp(self):
