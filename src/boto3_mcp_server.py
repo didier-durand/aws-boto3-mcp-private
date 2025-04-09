@@ -10,12 +10,12 @@ from tools import is_deno_installed, execute_code, process_execution_log
 # https://medium.com/@cstroliadavis/building-mcp-servers-536969d27809
 # https://github.com/alexei-led/aws-mcp-server
 
-SERVER_NAME = "aws-boto3-mcp"
+MCP_SERVER_NAME = "aws-boto3-mcp"
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
                     handlers=[logging.StreamHandler(sys.stderr)])
-logger = logging.getLogger(SERVER_NAME)
+logger = logging.getLogger(MCP_SERVER_NAME)
 
 
 # run checks before start
@@ -49,10 +49,11 @@ def startup_checks() -> bool:
     return True
 
 
-mcp_server = FastMCP(SERVER_NAME)
+mcp_server = FastMCP(MCP_SERVER_NAME)
 
 
-@mcp_server.tool(name=SERVER_NAME + "-execute-code")
+@mcp_server.tool(name=MCP_SERVER_NAME + "-execute-code",
+                 description="MCP tool to execute Python code using Boto3 supplied by AWS SDK")
 async def execute_boto3_code() -> str:
     return "foo"
 

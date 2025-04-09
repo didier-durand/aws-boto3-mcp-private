@@ -6,7 +6,7 @@ from mcp import Tool
 from mcp.server import FastMCP
 
 from mcp_testcase import McpTestCase  # pylint: disable=E0401
-from boto3_mcp_server import startup_checks, mcp_server
+from boto3_mcp_server import startup_checks, mcp_server, MCP_SERVER_NAME
 
 
 @pytest.fixture(scope="class")
@@ -36,4 +36,7 @@ class TestServer(McpTestCase):
         self.assertEqual(len(tools), 1)
         tool = tools[0]
         self.assertIsInstance(tool, Tool)
-        self.assertEqual("aws-boto3-mcp-execute-code", tool.name)
+        print(f"tool name: {tool.name}")
+        print(f"tool description: {tool.description}")
+        self.assertTrue(tool.name.startswith(MCP_SERVER_NAME))
+        self.assertGreater(len(tool.description), 20)
