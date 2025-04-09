@@ -2,6 +2,7 @@ import asyncio
 import logging
 import sys
 import textwrap
+from typing import TypedDict
 
 from mcp.server.fastmcp import FastMCP
 
@@ -52,10 +53,16 @@ def startup_checks() -> bool:
 mcp_server = FastMCP(MCP_SERVER_NAME)
 
 
+class CommandResult(TypedDict):
+    """Type definition for command execution results."""
+    status: str
+    output: str
+
+
 @mcp_server.tool(name=MCP_SERVER_NAME + "-execute-code",
                  description="MCP tool to execute Python code using Boto3 supplied by AWS SDK")
-async def execute_boto3_code() -> str:
-    return "foo"
+async def execute_boto3_code() -> CommandResult:
+    return CommandResult(status="success", output="stdout_str")
 
 
 if __name__ == "__main__":
