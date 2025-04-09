@@ -1,4 +1,5 @@
 import ast
+import json
 import traceback
 from typing import Tuple
 
@@ -6,7 +7,8 @@ from mcp import StdioServerParameters, stdio_client, ClientSession
 
 from utils import exec_os_command
 
-async def execute_code(code: str = "", debug: bool = False) -> type[bool,str]:
+
+async def execute_code(code: str = "", debug: bool = False) -> type[bool, str]:
     server_params = StdioServerParameters(
         command='deno',
         args=[
@@ -35,17 +37,56 @@ async def execute_code(code: str = "", debug: bool = False) -> type[bool,str]:
                 print(result.content[0].text)
             return result.isError, result.content[0].text
 
-def is_code_valid(code: str) -> tuple[bool,str | None]:
+
+def process_execution_log(log: str) -> Tuple[str, str, list[str]]:
+    status: str = ""
+    exec_result: str = ""
+    dependencies: list[str] = list[str]()
+    #
+    tags = ["status", "dependencies", "error", "output", "return_value"]
+    while log != "":
+        tag = log.split(">")[0].split("<")[1] # noqa
+        if tag not in tags:
+            raise ValueError(f"Unknown tag {tag}")
+        log_split: list[str] = log.split("</" + tag + ">")
+        log = log_split[1]
+        item = log_split[0].split("<" + tag + ">")[1]
+        match tag:
+            case "status":
+                if item not in ["success", "run-error"]:
+                    raise ValueError(f"{item} is not a known status")
+                status = item
+            case "dependencies":
+                dependencies = json.loads(item)
+            case "error":
+                if exec_result != "":
+                    raise ValueError(f"execution result already found for error: {exec_result}")
+                if item is not None:
+                    exec_result = item
+            case "output":
+                if exec_result != "":
+                    raise ValueError(f"execution result already found for output: {exec_result}")
+                if item is not None:
+                    exec_result = item
+            case "return_value":
+                pass
+            case _:
+                raise ValueError(f"unknown log item: {item} - {log}")
+    return status, exec_result, dependencies
+
+
+def is_code_valid(code: str) -> tuple[bool, str | None]:
     try:
         module = ast.parse(code)
     except SyntaxError:
         tb = traceback.format_exc()
         return False, tb
     if isinstance(module, ast.Module):
-        return True,None
-    return False,None
+        return True, None
+    return False, None
 
-def is_deno_installed(command="deno --version") -> Tuple[bool,str]:
+
+def is_deno_installed(command="deno --version") -> Tuple[bool, str]:
     exception, rc, stdout, stderr = exec_os_command(command)
     if exception is not None or rc != 0 or stderr != "":
         return False, ""

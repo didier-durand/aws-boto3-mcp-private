@@ -1,4 +1,5 @@
 import subprocess
+import xml.etree.ElementTree as elementTree
 
 
 def exec_os_command(command: list[str] | str = None) -> tuple[Exception | None, int | None, str | None, str | None]:
@@ -12,3 +13,11 @@ def exec_os_command(command: list[str] | str = None) -> tuple[Exception | None, 
     except Exception as exception:  # noqa pylint: disable=W0718
         return exception, None, None, None
     return None, process.returncode, process.stdout, process.stderr
+
+
+def is_xml(value):
+    try:
+        elementTree.fromstring(value)
+    except elementTree.ParseError:
+        return False
+    return True
