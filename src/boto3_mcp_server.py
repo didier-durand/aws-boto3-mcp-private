@@ -52,7 +52,7 @@ def startup_checks() -> bool:
 mcp_server = FastMCP(SERVER_NAME)
 
 
-@mcp_server.tool()
+@mcp_server.tool(name=SERVER_NAME + "-execute-code")
 async def execute_boto3_code() -> str:
     return "foo"
 
