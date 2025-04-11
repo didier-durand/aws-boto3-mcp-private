@@ -9,7 +9,7 @@ import boto3_fastapi_server
 from boto3_fastapi_server import BackendApi, MCP_HOST, MCP_PORT, fastapi_server, ExecRequest
 from boto3_mcp_server import MCP_SERVER_NAME
 
-class TestBoto3McpServer(unittest.IsolatedAsyncioTestCase):
+class TestBoto3FastapiServer(unittest.IsolatedAsyncioTestCase):
 
 
     proc: Process = None
@@ -23,43 +23,47 @@ class TestBoto3McpServer(unittest.IsolatedAsyncioTestCase):
             count += 1
             if count > 5:
                 self.fail("fastapi_server did not start properly")
+            app: str = (f"{boto3_fastapi_server=}".split('=', maxsplit=1)[0]
+                   + ":" + f"{fastapi_server=}".split('=', maxsplit=1)[0])
             try:
                 response = requests.get(self.endpoint, timeout=2)
             except requests.exceptions.ConnectionError:
-                TestBoto3McpServer.proc = Process(target=uvicorn.run,
+                TestBoto3FastapiServer.proc = Process(target=uvicorn.run,
                                     kwargs={
-                                        "app": f"{boto3_fastapi_server=}".split('=',maxsplit=1)[0]
-                                               + ":" + f"{fastapi_server=}".split('=',maxsplit=1)[0],
+                                        "app": app,
                                         "host": MCP_HOST,
                                         "port": MCP_PORT,
                                         "log_level": "info"},
                                     daemon=True
                                     )
-                TestBoto3McpServer.proc.start()
-                while not self.proc.is_alive():
+                TestBoto3FastapiServer.proc.start()
+                while not TestBoto3FastapiServer.proc.is_alive():
                     sleep(0.2)
             if response is not None:
-                if response.status_code == 200 and response.text == MCP_SERVER_NAME:
+                if response.status_code == 200 and response.text == f"{MCP_SERVER_NAME}\n":
                     break
             sleep(1)
 
     @classmethod
     def tearDownClass(cls):
         cls.proc.terminate()
-        print(f"\n### ending {TestBoto3McpServer.__name__}")
+        print(f"\n### ending {TestBoto3FastapiServer.__name__}")
 
-    def test_root_url(self):
+    def test_get_root_url(self):
         response = requests.get(self.endpoint,timeout=2)
         print(f"response: {response.content.decode()}")
         self.assertEqual(200, response.status_code)
-        self.assertEqual(MCP_SERVER_NAME, response.text)
+        self.assertEqual(f"{MCP_SERVER_NAME}\n", response.text)
 
-    def test_execute_python(self):
-        exec_request = ExecRequest(code="print")
-        my_obj = exec_request.json()
-        response = requests.post(self.endpoint + f"/{BackendApi.EXECUTE_PYTHON}", timeout=2,json=my_obj)
-        print(f"response: {response.content.decode()}")
-        self.assertEqual(422, response.status_code)
+    # curl -d '{"code":"x=3*2"}' -H "Content-Type: application/json" -X POST http://localhost:5000/execute_python
+    def test_post_execute_python(self):
+        code = "x=0"
+        exec_request = ExecRequest(code=code)
+        json_str = exec_request.model_dump_json(exclude_unset=True)
+        response = requests.post(self.endpoint + f"/{BackendApi.EXECUTE_PYTHON}", timeout=2,data=json_str.encode(encoding="utf-8"))
+        print(f"request: {json_str} - response: {response.content.decode()}")
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(f"\"{code}\"",response.text)
 
     def test_invalid_url(self):
         response = requests.post(self.endpoint + f"/{BackendApi.INVALID_URL}", timeout=2)

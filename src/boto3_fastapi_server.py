@@ -17,15 +17,17 @@ class BackendApi(StrEnum):
 class ExecRequest(BaseModel):
     code: str
     description: str | None = None
+    aws_access_key_id: str | None = None
+    aws_secret_access_key: str | None = None
 fastapi_server = FastAPI()
 
 @fastapi_server.get("/", response_class=PlainTextResponse)
 async def get_root():
-    return MCP_SERVER_NAME
+    return f"{MCP_SERVER_NAME}\n"
 
 @fastapi_server.post(f"/{BackendApi.EXECUTE_PYTHON}")
 async def post_execute(exec_request: ExecRequest):
-    return exec_request
+    return exec_request.code
 
 if __name__ == "__main__":
     uvicorn.run(app="boto3_fastapi_server:fastapi_server", host=MCP_HOST, port=MCP_PORT, reload=True)
