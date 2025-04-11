@@ -49,6 +49,11 @@ class TestBoto3FastapiServer(unittest.IsolatedAsyncioTestCase):
         cls.proc.terminate()
         print(f"\n### ending {TestBoto3FastapiServer.__name__}")
 
+    def test_invalid_url(self):
+        response = requests.post(self.endpoint + f"/{BackendApi.INVALID_URL}", timeout=2)
+        print(f"response: {response.content.decode()}")
+        self.assertEqual(404, response.status_code)
+
     def test_get_root_url(self):
         response = requests.get(self.endpoint,timeout=2)
         print(f"response: {response.content.decode()}")
@@ -57,15 +62,34 @@ class TestBoto3FastapiServer(unittest.IsolatedAsyncioTestCase):
 
     # curl -d '{"code":"x=3*2"}' -H "Content-Type: application/json" -X POST http://localhost:5000/execute_python
     def test_post_execute_python(self):
-        code = "x=0"
+        code = """
+        x=0
+        print(f"x:{x}")
+        """
         exec_request = ExecRequest(code=code)
         json_str = exec_request.model_dump_json(exclude_unset=True)
-        response = requests.post(self.endpoint + f"/{BackendApi.EXECUTE_PYTHON}", timeout=2,data=json_str.encode(encoding="utf-8"))
+        response = requests.post(self.endpoint + f"/{BackendApi.EXECUTE_PYTHON}", timeout=20,data=json_str.encode(encoding="utf-8"))
         print(f"request: {json_str} - response: {response.content.decode()}")
         self.assertEqual(200, response.status_code)
-        self.assertEqual(f"\"{code}\"",response.text)
+        self.assertEqual("\"\\nx:0\\n\"",response.text)
 
-    def test_invalid_url(self):
-        response = requests.post(self.endpoint + f"/{BackendApi.INVALID_URL}", timeout=2)
-        print(f"response: {response.content.decode()}")
-        self.assertEqual(404, response.status_code)
+    def test_sandbox_config(self):
+        code = """
+        import sys
+        import os
+        import platform
+        import shutil
+        print(f"Linux distribution: {platform.uname()}")
+        print(f"Python version: {sys.version}")
+        print(f"Python version_info: {sys.version_info}")
+        print(f"current dir: {os.getcwd()}")
+        print(f"root dir content: {os.listdir(path='/')}")
+        total, used, free = shutil.disk_usage("/")
+        print(f"storage - total: {total//2**20:,} MiB, used: {used//2**20:,} MiB , free: {free//2**20:,} MiB")
+        """
+        exec_request = ExecRequest(code=code)
+        json_str = exec_request.model_dump_json(exclude_unset=True)
+        response = requests.post(self.endpoint + f"/{BackendApi.EXECUTE_PYTHON}", timeout=20,data=json_str.encode(encoding="utf-8"))
+        self.assertEqual(200, response.status_code)
+        print("response:")
+        print(response.text.replace("\\n", "\n"))

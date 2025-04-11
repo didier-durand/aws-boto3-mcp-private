@@ -6,6 +6,7 @@ from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel
 
 from boto3_mcp_server import MCP_SERVER_NAME
+from tools import execute_code, process_execution_log
 
 MCP_HOST = "127.0.0.1"
 MCP_PORT = 5000
@@ -27,7 +28,15 @@ async def get_root():
 
 @fastapi_server.post(f"/{BackendApi.EXECUTE_PYTHON}")
 async def post_execute(exec_request: ExecRequest):
-    return exec_request.code
+    is_error, log = await execute_code(code=exec_request.code, debug=False)
+    if is_error:
+        pass
+    status, exec_result, dependencies = process_execution_log(log=log)
+    if status != "success":
+        pass
+    if dependencies:
+        pass
+    return exec_result
 
 if __name__ == "__main__":
     uvicorn.run(app="boto3_fastapi_server:fastapi_server", host=MCP_HOST, port=MCP_PORT, reload=True)

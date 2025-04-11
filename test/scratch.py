@@ -1,5 +1,3 @@
-from math import sqrt
-from random import random
+import platform
 
-x=random() + sqrt(2)
-print(x)
+platform.uname()

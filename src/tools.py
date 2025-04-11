@@ -1,5 +1,6 @@
 import ast
 import json
+import textwrap
 import traceback
 from typing import Tuple
 
@@ -9,6 +10,7 @@ from utils import exec_os_command
 
 
 async def execute_code(code: str = "", debug: bool = False) -> type[bool, str]:
+    code = textwrap.dedent(code)
     server_params = StdioServerParameters(
         command='deno',
         args=[
