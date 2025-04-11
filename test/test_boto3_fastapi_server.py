@@ -80,12 +80,29 @@ class TestBoto3FastapiServer(unittest.IsolatedAsyncioTestCase):
         import platform
         import shutil
         print(f"Linux distribution: {platform.uname()}")
-        print(f"Python version: {sys.version}")
-        print(f"Python version_info: {sys.version_info}")
         print(f"current dir: {os.getcwd()}")
         print(f"root dir content: {os.listdir(path='/')}")
         total, used, free = shutil.disk_usage("/")
         print(f"storage - total: {total//2**20:,} MiB, used: {used//2**20:,} MiB , free: {free//2**20:,} MiB")
+        print(f"Python version: {sys.version}")
+        print(f"Python version_info: {sys.version_info}")
+        print("installed Python modules:")
+        help("modules")
+        """
+        exec_request = ExecRequest(code=code)
+        json_str = exec_request.model_dump_json(exclude_unset=True)
+        response = requests.post(self.endpoint + f"/{BackendApi.EXECUTE_PYTHON}", timeout=20,data=json_str.encode(encoding="utf-8"))
+        self.assertEqual(200, response.status_code)
+        print("response:")
+        print(response.text.replace("\\n", "\n"))
+
+    def test_boto3(self):
+        # https://stackoverflow.com/questions/54217137/from-urllib3-util-ssl-import-importerror-cannot-import-name-ssl
+        code = """
+        import pip
+        # pip.main(['install', '--upgrade', 'urllib3'])
+        # import boto3
+        # import botocore
         """
         exec_request = ExecRequest(code=code)
         json_str = exec_request.model_dump_json(exclude_unset=True)

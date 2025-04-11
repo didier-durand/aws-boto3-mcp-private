@@ -28,11 +28,11 @@ async def execute_code(code: str = "", debug: bool = False) -> type[bool, str]:
         async with ClientSession(read, write) as session:
             await session.initialize()
             tools = await session.list_tools()
+            assert 1 == len(tools.tools)
+            assert tools.tools[0].name == 'run_python_code'
             if debug:
                 print(f"tools len: {len(tools.tools)}")
-                assert 1 == len(tools.tools)
                 print(f"tool name: {repr(tools.tools[0].name)}")
-                assert tools.tools[0].name == 'run_python_code'
                 print(repr(tools.tools[0].inputSchema))
             result = await session.call_tool('run_python_code', {'python_code': code})
             if debug:
