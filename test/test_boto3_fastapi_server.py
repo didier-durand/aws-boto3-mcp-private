@@ -11,7 +11,6 @@ from boto3_mcp_server import MCP_SERVER_NAME
 
 class TestBoto3FastapiServer(unittest.IsolatedAsyncioTestCase):
 
-
     proc: Process = None
 
     def setUp(self):
@@ -98,19 +97,47 @@ class TestBoto3FastapiServer(unittest.IsolatedAsyncioTestCase):
         print("response:")
         print(response.text.replace("\\n", "\n"))
 
-    def test_boto3(self):
+    # https://github.com/urllib3/urllib3/issues/2951 limitations of Pyodide
+    def test_package_boto3(self):
         # https://stackoverflow.com/questions/54217137/from-urllib3-util-ssl-import-importerror-cannot-import-name-ssl
         code = """
         import micropip
         await micropip.install("ssl")
-        await micropip.install("urllib3"
         import boto3
         import botocore
-        boto3.client("sts").get_caller_identity()
+        response = boto3.client(
+            "s3",
+            aws_access_key_id="bar",
+            aws_secret_access_key="baz",
+            aws_session_token="foo"
+        ).list_buckets()
+        print(response)
         """
         exec_request = ExecRequest(code=code)
         json_str = exec_request.model_dump_json(exclude_unset=True)
-        response = requests.post(self.endpoint + f"/{BackendApi.EXECUTE_PYTHON}", timeout=20,data=json_str.encode(encoding="utf-8"))
+        response = requests.post(self.endpoint + f"/{BackendApi.EXECUTE_PYTHON}", timeout=60,data=json_str.encode(encoding="utf-8"))
         self.assertEqual(200, response.status_code)
         print("response:")
         print(response.text.replace("\\n", "\n"))
+
+    def test_package_aiboto3(self):
+        # https://stackoverflow.com/questions/54217137/from-urllib3-util-ssl-import-importerror-cannot-import-name-ssl
+        #code =
+        """
+        import asyncio
+        import aiboto3
+        async def main():
+            session = aioboto3.Session()
+            async with session.resource("s3") as s3:
+                bucket = await s3.Bucket('mybucket')
+                async for s3_object in bucket.objects.all():
+                    print(s3_object)
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(main())
+        """
+        # exec_request = ExecRequest(code=code)
+        # json_str = exec_request.model_dump_json(exclude_unset=True)
+        # response = requests.post(self.endpoint + f"/{BackendApi.EXECUTE_PYTHON}", timeout=60,data=json_str.encode(encoding="utf-8"))
+        # self.assertEqual(200, response.status_code)
+        # print("response:")
+        # print(response.text.replace("\\n", "\n"))

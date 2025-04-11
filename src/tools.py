@@ -55,7 +55,7 @@ def process_execution_log(log: str) -> Tuple[str, str, list[str]]:
         item = log_split[0].split("<" + tag + ">")[1]
         match tag:
             case "status":
-                if item not in ["success", "run-error"]:
+                if item not in ["success", "run-error","install-error"]:
                     raise ValueError(f"{item} is not a known status")
                 status = item
             case "dependencies":
@@ -74,6 +74,8 @@ def process_execution_log(log: str) -> Tuple[str, str, list[str]]:
                 pass
             case _:
                 raise ValueError(f"unknown log item: {item} - {log}")
+        if status == "install-error":
+            raise ValueError(f"status {status} - additional info: {log}")
     return status, exec_result, dependencies
 
 
