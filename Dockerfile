@@ -20,8 +20,9 @@ RUN apk upgrade \
 WORKDIR ${MCP_DIR}
 
 # copy files from build image
-COPY README.md requirements.txt src/ ${MCP_DIR}
-COPY src/ ${MCP_DIR}
+COPY README.md .
+COPY requirements.txt .
+COPY src/ .
 
 # hadolint ignore=SC1091
 RUN python${PYTHON_VERSION} -m venv ".venv" \
