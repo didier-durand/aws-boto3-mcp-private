@@ -4,23 +4,24 @@
 ARG ROOT_IMG="docker:dind"
 # ARG ROOT_IMG="alpine"
 
+# hadolint ignore=DL3006
 FROM ${ROOT_IMG}
 SHELL ["/bin/sh", "-c"]
 
 ARG PYTHON_VERSION="3.12"
 ARG MCP_DIR="/app/boto3-mcp/"
 
-# install tools & utilities + Python
-# hadolint ignore=DL3008
+# hadolint ignore=DL3018
 RUN apk upgrade \
-    && apk add bash curl wget findutils which grep sed git patch unzip  \
-    && apk add python3 python3-dev py3-pip
+    && apk add --no-cache bash curl wget findutils which grep sed git patch unzip  \
+    && apk add --no-cache python3 python3-dev py3-pip
 
 # create the owl dir
 WORKDIR ${MCP_DIR}
 
 # copy files from build image
 COPY README.md requirements.txt src/ ${MCP_DIR}
+COPY src/ ${MCP_DIR}
 
 # hadolint ignore=SC1091
 RUN python${PYTHON_VERSION} -m venv ".venv" \
