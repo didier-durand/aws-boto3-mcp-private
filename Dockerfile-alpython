@@ -1,6 +1,6 @@
 # docker run --name alpython alpython python3.12 -c "print('foo')"
 
-FROM alpine
+FROM alpine:latest
 SHELL ["/bin/sh", "-c"]
 
 ARG PYTHON_VERSION="3.12"
