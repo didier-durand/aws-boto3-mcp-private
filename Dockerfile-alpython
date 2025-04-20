@@ -12,7 +12,7 @@ RUN apk upgrade \
     && apk add --no-cache bash curl wget findutils which grep sed git patch unzip  \
     && apk add --no-cache python3 python3-dev py3-pip
 
-# create the owl dir
+# create the mcp dir
 WORKDIR ${MCP_DIR}
 
 # copy requirements
