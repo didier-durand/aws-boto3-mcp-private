@@ -1,4 +1,4 @@
-name: 'docker build boto3-mcp'
+name: 'docker build alpython'
 
 on:
 
@@ -6,19 +6,19 @@ on:
 
   push:
     paths:
-      - '../../Dockerfile-boto3-mcp'
-      - '.github/workflows/build_docker_boto3_mcp.yaml'
+      - '../../Dockerfile-alpython'
+      - '.github/workflows/build_docker_alpython.yaml'
       - '.hadolint.yaml'
 
 jobs:
 
-  build_docker_boto3_mcp:
+  build_docker_alpython:
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
     env:
-      DOCKER_FILE: 'Dockerfile-boto3-mcp'
-      DOCKER_TAGS: 'didierdurand/boto3-mcp:latest'
+      DOCKER_FILE: 'Dockerfile-alpython'
+      DOCKER_TAGS: 'didierdurand/alpython:latest'
 
     steps:
 
