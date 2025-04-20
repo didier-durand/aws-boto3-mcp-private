@@ -1,7 +1,6 @@
-# docker run -p 7591:7591 --name boto3-mcp didierdurand/boto3-mcp:ubuntu24.04-latest
-# docker run --privileged --name dind-container -d docker:dind
+# docker run --name alpython alpython python3.12 -c "print('foo')"
 
-FROM docker:dind
+FROM alpine
 SHELL ["/bin/sh", "-c"]
 
 ARG PYTHON_VERSION="3.12"
@@ -27,5 +26,3 @@ RUN python${PYTHON_VERSION} -m venv ".venv" \
 
 # setup runtime env vars
 ENV PYTHON_VERSION=${PYTHON_VERSION}
-
-EXPOSE 7591
