@@ -1,5 +1,6 @@
 # docker run --name alpython alpython python3.12 -c "print('foo')"
 
+# hadolint ignore=DL3007
 FROM alpine:latest
 SHELL ["/bin/sh", "-c"]
 
