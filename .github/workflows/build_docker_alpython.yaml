@@ -25,6 +25,10 @@ jobs:
       - name: 'checkout git code'
         uses: actions/checkout@v4
 
+      - name: 'prelude'
+        run: |
+          printenv
+
 #      - name: 'log in to Docker Hub'
 #        uses: docker/login-action@v3
 #        with:
