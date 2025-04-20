@@ -15,15 +15,18 @@ RUN apk upgrade \
 # create the owl dir
 WORKDIR ${MCP_DIR}
 
-# copy files from build image
-COPY README.md .
+# copy requirements
 COPY requirements.txt .
-COPY src/ .
 
 # hadolint ignore=SC1091
 RUN python${PYTHON_VERSION} -m venv ".venv" \
     && source ".venv/bin/activate" \
-    && python${PYTHON_VERSION} -m pip install --upgrade --no-cache-dir -r requirements.txt
+    && python${PYTHON_VERSION} -m pip install --upgrade --no-cache-dir -r requirements.txt \
+    && rm -rf /root/.cache/pip
+
+# copy app files
+COPY README.md .
+COPY src/ .
 
 # setup runtime env vars
 ENV PYTHON_VERSION=${PYTHON_VERSION}
