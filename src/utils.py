@@ -1,5 +1,10 @@
 import subprocess
 import xml.etree.ElementTree as elementTree
+from datetime import datetime
+
+
+def get_timestamp() -> str:
+    return datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 
 
 def exec_os_command(command: list[str] | str = None) -> tuple[Exception | None, int | None, str | None, str | None]:

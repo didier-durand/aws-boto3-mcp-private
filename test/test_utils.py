@@ -1,10 +1,17 @@
 import unittest
 from sys import platform
 
-from utils import exec_os_command, is_xml
+from utils import exec_os_command, is_xml, get_timestamp
 
 
 class TestUtils(unittest.TestCase):
+
+    def test_get_timestamp(self):
+        ts = get_timestamp()
+        chunks = ts.split('-')
+        self.assertEqual(6, len(chunks))
+        for chunk in chunks:
+            self.assertTrue(chunk.isdigit())
 
     def test_exec_os_command_ko(self):
         exception, rc, stdout, stderr = exec_os_command("foo-bar-foo")
