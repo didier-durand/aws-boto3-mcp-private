@@ -1,4 +1,4 @@
-name: 'docker build alpine ython'
+name: 'docker build alpine python'
 
 on:
 
