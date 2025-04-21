@@ -1,7 +1,4 @@
-
 import unittest
-
-import pytest
 
 from utils import exec_os_command
 
@@ -24,17 +21,27 @@ class TestDindImage(unittest.TestCase):
         exception, rc, stdout, stderr = exec_os_command(f"docker pull {account}/{image}")
         self.assertIsNone(exception)
         self.assertEqual(0, rc)
-        exception, rc, stdout, stderr = exec_os_command(f"docker run --name {image} "
-                                                        f"{account}/{image} {command}")
+        exception, rc, stdout, stderr = exec_os_command(command=f"docker run --rm --name {image} "
+                                                                f"{account}/{image} {command}",
+                                                        debug=False)
         self.assertIsNone(exception)
         return rc, stdout, stderr
 
-    @pytest.mark.skip
-    def test_pull_alpython(self):
+    def test_get_version_in_dind(self):
+        command = "docker --version"
+        rc, stdout, stderr = self.run_python_container(self.account, self.image, command)
+        print(stdout)
+        print(stderr)
+        self.assertEqual("", stderr)
+        self.assertTrue(stdout.startswith("Docker version"))
+        self.assertEqual(0, rc)
+
+    @unittest.skip
+    def test_pull_alpython_in_dind(self):
         command = "docker pull didierdurand/alpython"
         rc, stdout, stderr = self.run_python_container(self.account, self.image, command)
         print(stdout)
         print(stderr)
-        self.assertEqual(0, rc)
         self.assertEqual("", stderr)
         self.assertEqual("", stdout)
+        self.assertEqual(0, rc)
