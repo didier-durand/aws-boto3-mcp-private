@@ -3,8 +3,8 @@ name: 'cfn-lint template'
 on:
   push:
     paths:
-      - ../../cfn-aws-boto3-mcp.yaml
-      - .github/workflows/lint_cfn.yaml
+      - '../../cfn-aws-boto3-mcp.yaml'
+      - '.github/workflows/lint_cfn.yaml'
 
 jobs:
 
@@ -13,13 +13,8 @@ jobs:
     steps:
       - name: 'checkout git code'
         uses: actions/checkout@v4
-      - name: 'list changed files'
-        id: changed-files
-        uses: tj-actions/changed-files@v45
       - name: 'lint CFN template'
-        env:
-          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
         run: |
           pip install cfn-lint
-          echo "linting CFN template: cfn-boto3-mcp.yaml"
-          cfn-lint --info cfn-boto3-mcp.yaml
+          echo "linting CFN template: cfn-aws-boto3-mcp.yaml"
+          cfn-lint --info cfn-aws-boto3-mcp.yaml

@@ -29,7 +29,7 @@ class TestAwsBoto3McpImage(unittest.TestCase):
         self.assertIsNone(exception)
         return rc, stdout, stderr
 
-    def test_get_version_in_dind(self):
+    def test_get_docker_version_in_dind(self):
         command = "docker --version"
         rc, stdout, stderr = self.run_python_container(self.account, self.image, command)
         print(stdout)
@@ -38,7 +38,7 @@ class TestAwsBoto3McpImage(unittest.TestCase):
         self.assertTrue(stdout.startswith("Docker version"))
         self.assertEqual(0, rc)
 
-    def test_pull_alpython_in_dind(self):
+    def test_pull_nginx_in_dind(self):
         command = "docker image rm nginx"
         self.run_python_container(self.account, self.image, command)
         command = "docker pull nginx"

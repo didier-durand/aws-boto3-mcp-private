@@ -14,7 +14,8 @@ def exec_os_command(command: list[str] | str = None,debug: bool = False) -> tupl
         print("executing command:", " ".join(command))
     try:
         process: subprocess.CompletedProcess = subprocess.run(command,
-                                                              capture_output=True,
+                                                              stdout=subprocess.PIPE,
+                                                              stderr=subprocess.PIPE,
                                                               text=True,
                                                               check=False)
     except Exception as exception:  # noqa pylint: disable=W0718
