@@ -3,7 +3,7 @@ name: 'cfn-lint template'
 on:
   push:
     paths:
-      - cfn-boto3-mcp.yaml
+      - ../../cfn-aws-boto3-mcp.yaml
       - .github/workflows/lint_cfn.yaml
 
 jobs:
