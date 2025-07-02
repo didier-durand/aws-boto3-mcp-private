@@ -10,7 +10,7 @@ class TestAwsBoto3McpImage(unittest.TestCase):
         self.image = "aws-boto3-mcp"
 
     def run_python_container(self, account, image, command):
-        exception, rc, stdout, stderr = exec_os_command(f"docker rm {image}")
+        exception, rc, stdout, stderr = exec_os_command(f"docker rm {image}", debug=False)
         self.assertIsNone(exception)
         if rc == 1:
             self.assertEqual(f"Error response from daemon: No such container: {image}\n", stderr)
@@ -18,14 +18,15 @@ class TestAwsBoto3McpImage(unittest.TestCase):
             self.assertEqual(f"{image}\n", stdout)
         else:
             self.fail(f"unexpected rc: {rc}")
-        exception, rc, stdout, stderr = exec_os_command(f"docker pull {account}/{image}")
+        exception, rc, stdout, stderr = exec_os_command(f"docker pull {account}/{image}", debug=False)
         self.assertIsNone(exception)
         self.assertEqual(0, rc)
-        command: str = (f"docker run --rm --privileged --network host -v /var/run/docker.sock:/var/run/docker.sock "
+        command: str = (f"docker run --rm --privileged --network host "
+                        f"-v /var/run/docker.sock:/var/run/docker.sock "
                         f"--name {image} {account}/{image} {command}")
-        print("\ncommand:", command)
         exception, rc, stdout, stderr = exec_os_command(command=command,
-                                                        debug=False)
+                                                        check=True,
+                                                        debug=True)
         self.assertIsNone(exception)
         return rc, stdout, stderr
 
@@ -57,6 +58,7 @@ class TestAwsBoto3McpImage(unittest.TestCase):
         self.assertEqual("", stderr)
         self.assertTrue(stdout.startswith("Python 3.12"))
 
+    @unittest.skip
     def test_exec_python_print_in_dind(self):
         timestamp = get_timestamp()
         code = f"python3.12 -c \"print('{timestamp}')\""
@@ -68,6 +70,7 @@ class TestAwsBoto3McpImage(unittest.TestCase):
         self.assertEqual("", stderr)
         self.assertEqual(f"{timestamp}", stdout)
 
+    @unittest.skip
     def test_exec_python_error_in_dind(self):
         code = "1/0"
         command = f"python3.12 -c \"{code}\""

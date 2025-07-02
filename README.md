@@ -1,5 +1,7 @@
 # aws-boto3-mcp-private
 
+[certified by MCP Review](https://mcphub.com/mcp-servers/didier-durand/aws-boto3-mcp-private)
+
 AWS Boto3 (Python) MCP Server is a MCP server aimed at executing Python code using the Boto3 client from the AWS Python 
 SDK implemented to monitor and manage AWS resources in a given account. 
 
